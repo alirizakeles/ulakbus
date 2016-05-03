@@ -56,7 +56,10 @@ class Kadrolar(Reporter):
             result.append((choices.get(val, val), num))
         return result
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> CHANGE rref #5169, testlerde düzenleme ve metod isminde düzenleme
 class TerfisiTikananPersonel(Reporter):
     TITLE = "Terfisi Tıkanan Personel Listesi"
 
