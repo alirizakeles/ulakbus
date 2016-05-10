@@ -578,3 +578,141 @@ class TerfiListe(CrudView):
             'title': 'Terfi İşlemleri',
             'msg': 'Toplu terfi İşleminiz Onaylandı'
         }
+
+class TerfiIslemForm(JsonForm):
+    key = fields.String("Key", hidden=True)
+    tckn = fields.String("T.C. No")
+    ad_soyad = fields.String("İsim")
+    kadro_derece = fields.String("Kadro Derece")
+
+    gorev_ayligi = fields.String("GA")
+    kazanilmis_hak = fields.String("KH")
+    emekli_muktesebat = fields.String("EM")
+
+    yeni_gorev_ayligi_derece = fields.Integer("GAD")
+    yeni_gorev_ayligi_kademe = fields.Integer("GAK")
+    yeni_gorev_ayligi_gorunen = fields.Integer("GAG")
+
+    yeni_kazanilmis_hak_derece = fields.Integer("KHD")
+    yeni_kazanilmis_hak_kademe = fields.Integer("KHK")
+    yeni_kazanilmis_hak_gorunen = fields.Integer("KHG")
+
+    yeni_emekli_muktesebat_derece = fields.Integer("EMD")
+    yeni_emekli_muktesebat_kademe = fields.Integer("EMK")
+    yeni_emekli_muktesebat_gorunen = fields.Integer("EMG")
+
+    devam = fields.Button("Devam Et", cmd="kaydet")
+
+class TerfiOnayForm(JsonForm):
+    key = fields.String("Key", hidden=True)
+    tckn = fields.String("TCK No")
+    ad_soyad = fields.String("Ad")
+    kadro_derece = fields.String("Kadro Derece")
+
+    gorev_ayligi = fields.String("GA")
+    kazanilmis_hak = fields.String("KH")
+    emekli_muktesebat = fields.String("EM")
+
+    yeni_gorev_ayligi = fields.String("Yeni GA")
+    yeni_kazanilmis_hak = fields.String("Yeni KH")
+    yeni_emekli_muktesebat = fields.String("Yeni EM")
+
+    onay_buton = fields.Button("Onayla", cmd="terfi_onay")
+    red_buton = fields.Button("Red", cmd="terfi_red")
+
+class TerfiIslemleri(CrudView):
+    class Meta:
+        model = "Personel"
+
+    def terfi_form(self):
+        self.current.task_data["personel_id"] = self.current.input["id"]
+        personel = Personel.objects.get(self.current.task_data["personel_id"])
+        _form = TerfiIslemForm(
+            current = self.current,
+            title = "Terfi İşlemleri",
+            key = personel.key,
+            tckn = personel.tckn,
+            ad_soyad = "%s %s"%(personel.ad, personel.soyad),
+            kadro_derece = personel.kadro_derece,
+            gorev_ayligi = "%s/%s"%(personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe),
+            kazanilmis_hak = "%s/%s"%(personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe),
+            emekli_muktesebat = "%s/%s"%(personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe),
+            yeni_gorev_ayligi_derece = personel.gorev_ayligi_derece,
+            yeni_gorev_ayligi_kademe = personel.gorev_ayligi_kademe,
+            yeni_gorev_ayligi_gorunen = personel.gorev_ayligi_kademe,
+            yeni_kazanilmis_hak_derece = personel.kazanilmis_hak_derece,
+            yeni_kazanilmis_hak_kademe = personel.kazanilmis_hak_kademe,
+            yeni_kazanilmis_hak_gorunen = personel.kazanilmis_hak_kademe,
+            yeni_emekli_muktesebat_derece = personel.emekli_muktesebat_derece,
+            yeni_emekli_muktesebat_kademe = personel.emekli_muktesebat_kademe,
+            yeni_emekli_muktesebat_gorunen = personel.emekli_muktesebat_kademe
+        )
+        self.form_out(_form)
+
+    def kaydet_onaya_gonder(self):
+        self.current.task_data["personel_id"] = self.current.input["form"]["personel_id"]
+        self.current.task_data["yeni_gorev_ayligi_derece"] = self.current.input["form"]["yeni_gorev_ayligi_derece"]
+        self.current.task_data["yeni_gorev_ayligi_kademe"] = self.current.input["form"]["yeni_gorev_ayligi_kademe"]
+        self.current.task_data["yeni_kazanilmis_hak_derece"] = self.current.input["form"]["yeni_kazanilmis_hak_derece"]
+        self.current.task_data["yeni_kazanilmis_hak_kademe"] = self.current.input["form"]["yeni_kazanilmis_hak_kademe"]
+        self.current.task_data["yeni_emekli_muktesebat_derece"] = self.current.input["form"]["yeni_emekli_muktesebat_derece"]
+        self.current.task_data["yeni_emekli_muktesebat_kademe"] = self.current.input["form"]["yeni_emekli_muktesebat_kademe"]
+
+    def terfi_kontrol(self):
+        personel = Personel.objects.get(self.current.task_data["personel_id"])
+        _form = TerfiOnayForm(
+            current = self.current,
+            title = "Terfi Kontrol",
+            key = personel.key,
+            tckn = personel.tckn,
+            ad_soyad = "%s %s"%(personel.ad, personel.soyad),
+            kadro_derece = personel.kadro_derece,
+            gorev_ayligi = "%s/%s"%(personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe),
+            kazanilmis_hak = "%s/%s"%(personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe),
+            emekli_muktesebat = "%s/%s"%(personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe),
+            yeni_gorev_ayligi = "%s/%s"%(
+                self.current.task_data["yeni_gorev_ayligi_derece"],
+                self.current.task_data["yeni_gorev_ayligi_kademe"]
+            ),
+            yeni_kazanilmis_hak = "%s/%s"%(
+                self.current.task_data["yeni_kazanilmis_hak_derece"],
+                self.current.task_data["yeni_kazanilmis_hak_kademe"]
+            ),
+            yeni_emekli_muktesebat = "%s/%s"%(
+                self.current.task_data["yeni_emekli_muktesebat_derece"],
+                self.current.task_data["yeni_emekli_muktesebat_kademe"]
+            )
+        )
+
+        self.form_out(_form)
+
+    def terfi_onay(self):
+        personel = Personel.objects.get(self.current.task_data["personel_id"])
+        personel.gorev_ayligi_derece = self.current.task_data["yeni_gorev_ayligi_derece"]
+        personel.gorev_ayligi_kademe = self.current.task_data["yeni_gorev_ayligi_kademe"]
+        personel.kazanilmis_hak_derece = self.current.task_data["yeni_kazanilmis_hak_derece"]
+        personel.kazanilmis_hak_kademe = self.current.task_data["yeni_kazanilmis_hak_kademe"]
+        personel.emekli_muktesebat_derece = self.current.task_data["yeni_emekli_muktesebat_derece"]
+        personel.emekli_muktesebat_kademe = self.current.task_data["yeni_emekli_muktesebat_kademe"]
+        personel.save()
+
+    def red_aciklama_yaz(self):
+        _form = JsonForm(title="Terfi Islemi Reddedildi.")
+        _form.Meta.help_text = """Terfi işlemini onaylamadınız. İlgili personele bir açıklama
+                                  yazmak ister misiniz?"""
+        _form.red_aciklama = fields.String("Açıklama")
+        _form.devam = fields.Button("Devam Et")
+        self.form_out(_form)
+
+    def red_aciklama_kaydet(self):
+        self.current.task_data["red_aciklama"] = self.current.input["form"]["red_aciklama"]
+
+    def taraflari_bilgilendir(self):
+        pass
+
+    def onay_belgesi_uret(self):
+        self.current.output['msgbox'] = {
+            'type': 'info',
+            'title': 'Terfi İşlemleri',
+            'msg': 'Toplu terfi İşleminiz Onaylandı'
+        }
