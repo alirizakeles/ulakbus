@@ -60,7 +60,8 @@ Kadro Sil Onay
 
 """
 from pyoko.exceptions import ObjectDoesNotExist
-from ulakbus.lib.personel import terfi_tarhine_gore_personel_listesi
+from ulakbus.lib.personel import terfi_tarhine_gore_personel_listesi, suren_terfi_var_mi
+from ulakbus.lib.personel import terfi_durum_kontrol, derece_ilerlet, terfi_tikanma_kontrol
 from zengine.views.crud import CrudView, obj_filter
 from zengine.forms import JsonForm
 from zengine.forms import fields
@@ -627,27 +628,57 @@ class TerfiIslemleri(CrudView):
     def terfi_form(self):
         self.current.task_data["personel_id"] = self.current.input["id"]
         personel = Personel.objects.get(self.current.task_data["personel_id"])
-        _form = TerfiIslemForm(
-            current = self.current,
-            title = "Terfi İşlemleri",
-            key = personel.key,
-            tckn = personel.tckn,
-            ad_soyad = "%s %s"%(personel.ad, personel.soyad),
-            kadro_derece = personel.kadro_derece,
-            gorev_ayligi = "%s/%s"%(personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe),
-            kazanilmis_hak = "%s/%s"%(personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe),
-            emekli_muktesebat = "%s/%s"%(personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe),
-            yeni_gorev_ayligi_derece = personel.gorev_ayligi_derece,
-            yeni_gorev_ayligi_kademe = personel.gorev_ayligi_kademe,
-            yeni_gorev_ayligi_gorunen = personel.gorev_ayligi_kademe,
-            yeni_kazanilmis_hak_derece = personel.kazanilmis_hak_derece,
-            yeni_kazanilmis_hak_kademe = personel.kazanilmis_hak_kademe,
-            yeni_kazanilmis_hak_gorunen = personel.kazanilmis_hak_kademe,
-            yeni_emekli_muktesebat_derece = personel.emekli_muktesebat_derece,
-            yeni_emekli_muktesebat_kademe = personel.emekli_muktesebat_kademe,
-            yeni_emekli_muktesebat_gorunen = personel.emekli_muktesebat_kademe
-        )
-        self.form_out(_form)
+        if not suren_terfi_var_mi(personel.key):
+            self.current.output['msgbox'] = {
+                'type': 'info', "title": 'HATA !',
+                "msg": '%s %s isim soyisimli personelin devam eden bir terfi süreci bulunmaktadır' % (
+                    personel.ad, personel.soyad)
+            }
+        else:
+            if terfi_durum_kontrol(personel.key):
+                terfi_tikanma = terfi_tikanma_kontrol(personel.key)
+                personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe = derece_ilerlet(
+                    personel.kadro_derece,
+                    personel.gorev_ayligi_derece,
+                    personel.gorev_ayligi_kademe
+                )
+                personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe = derece_ilerlet(
+                    personel.kadro_derece,
+                    personel.kazanilmis_hak_derece,
+                    personel.kazanilmis_hak_kademe
+                )
+                personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe = derece_ilerlet(
+                    personel.kadro_derece,
+                    personel.emekli_muktesebat_derece,
+                    personel.emekli_muktesebat_kademe
+                )
+                _form = TerfiIslemForm(
+                    current = self.current,
+                    title = "Terfi İşlemleri",
+                    key = personel.key,
+                    tckn = personel.tckn,
+                    ad_soyad = "%s %s"%(personel.ad, personel.soyad),
+                    kadro_derece = personel.kadro_derece,
+                    gorev_ayligi = "%s/%s"%(personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe),
+                    kazanilmis_hak = "%s/%s"%(personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe),
+                    emekli_muktesebat = "%s/%s"%(personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe),
+                    yeni_gorev_ayligi_derece = personel.gorev_ayligi_derece,
+                    yeni_gorev_ayligi_kademe = personel.gorev_ayligi_kademe,
+                    yeni_gorev_ayligi_gorunen = personel.gorev_ayligi_kademe,
+                    yeni_kazanilmis_hak_derece = personel.kazanilmis_hak_derece,
+                    yeni_kazanilmis_hak_kademe = personel.kazanilmis_hak_kademe,
+                    yeni_kazanilmis_hak_gorunen = personel.kazanilmis_hak_kademe,
+                    yeni_emekli_muktesebat_derece = personel.emekli_muktesebat_derece,
+                    yeni_emekli_muktesebat_kademe = personel.emekli_muktesebat_kademe,
+                    yeni_emekli_muktesebat_gorunen = personel.emekli_muktesebat_kademe
+                )
+                self.form_out(_form)
+            else:
+                self.current.output['msgbox'] = {
+                    'type': 'info', "title": 'HATA !',
+                    "msg": '%s %s isim soyisimli personelin devam eden bir terfi süreci bulunmaktadır' % (
+                        personel.ad, personel.soyad)
+                }
 
     def kaydet_onaya_gonder(self):
         self.current.task_data["personel_id"] = self.current.input["form"]["personel_id"]

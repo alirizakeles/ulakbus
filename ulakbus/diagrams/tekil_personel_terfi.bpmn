@@ -30,13 +30,13 @@
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
     </bpmn2:userTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="StartEvent_1" targetRef="terfi_form"/>
-    <bpmn2:serviceTask id="terfi_kaydet" camunda:class="personel.kadro.TerfiIslem.kaydet_onaya_gonder" name="Terfi Kaydet ve Onaya Gönder">
+    <bpmn2:serviceTask id="terfi_kaydet" camunda:class="personel.kadro.TerfiIslemleri.kaydet_onaya_gonder" name="Terfi Kaydet ve Onaya Gönder">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="terfi_form" targetRef="terfi_kaydet"/>
     <bpmn2:sequenceFlow id="SequenceFlow_3" name="" sourceRef="terfi_kaydet" targetRef="terfi_kontrol"/>
-    <bpmn2:userTask id="terfi_kontrol" camunda:assignee="personel.kadro.TerfiIslem.terfi_kontrol" name="Terfi Kontrol">
+    <bpmn2:userTask id="terfi_kontrol" camunda:assignee="personel.kadro.TerfiIslemleri.terfi_kontrol" name="Terfi Kontrol">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
     </bpmn2:userTask>
@@ -46,14 +46,14 @@
       <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="terfi_kontrol" targetRef="ExclusiveGateway_1"/>
-    <bpmn2:userTask id="geri_gonder" camunda:assignee="personel.kadro.TerfiIslem.red_aciklama_yaz" name="Açıklama Yaz ve Geri Gönder">
+    <bpmn2:userTask id="geri_gonder" camunda:assignee="personel.kadro.TerfiIslemleri.red_aciklama_yaz" name="Açıklama Yaz ve Geri Gönder">
       <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
     </bpmn2:userTask>
     <bpmn2:sequenceFlow id="SequenceFlow_5" name="" sourceRef="ExclusiveGateway_1" targetRef="geri_gonder">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">cmd=='terfi_red'</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
-    <bpmn2:userTask id="onayla_kaydet" camunda:assignee="personel.kadro.TerfiIslem.terfi_onay" name="Terfi İşlemi Kaydet">
+    <bpmn2:userTask id="onayla_kaydet" camunda:assignee="personel.kadro.TerfiIslemleri.terfi_onay" name="Terfi İşlemi Kaydet">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
     </bpmn2:userTask>
@@ -64,12 +64,12 @@
     <bpmn2:endEvent id="EndEvent_1">
       <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:userTask id="onay_belgesi_uret" camunda:assignee="personel.kadro.TerfiIslem.onay_belgesi_uret" name="Onay Belgesi Üret">
+    <bpmn2:userTask id="onay_belgesi_uret" camunda:assignee="personel.kadro.TerfiIslemleri.onay_belgesi_uret" name="Onay Belgesi Üret">
       <bpmn2:incoming>SequenceFlow_9</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
     </bpmn2:userTask>
     <bpmn2:sequenceFlow id="SequenceFlow_10" name="" sourceRef="onay_belgesi_uret" targetRef="EndEvent_1"/>
-    <bpmn2:userTask id="taraflari_bilgilendir" camunda:assignee="personel.kadro.TerfiIslem.taraflari_bilgilendir" name="Tarafları Bilgilendir">
+    <bpmn2:userTask id="taraflari_bilgilendir" camunda:assignee="personel.kadro.TerfiIslemleri.taraflari_bilgilendir" name="Tarafları Bilgilendir">
       <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
     </bpmn2:userTask>

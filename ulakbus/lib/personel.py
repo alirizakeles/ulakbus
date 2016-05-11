@@ -7,6 +7,9 @@
 # (GPLv3).  See LICENSE.txt for details.
 
 import datetime
+from ulakbus.models import Personel, AskerlikKayitlari, UcretsizIzin
+from dateutil.relativedelta import relativedelta
+from pyoko.exceptions import ObjectDoesNotExist
 
 __author__ = 'Ali Riza Keles'
 
@@ -29,7 +32,7 @@ def gorunen_kademe_hesapla(derece, kademe):
         return 0
 
 
-def derece_ilerlet(pkd, der, kad):
+def derece_ilerlet(pkd, der, kad, terfi_tikanma):
     """
     Derece 3 kademede bir artar. Eger kademe 4 gelmise, derece 1 arttirilir
     Args:
@@ -42,7 +45,8 @@ def derece_ilerlet(pkd, der, kad):
 
     """
     if pkd < der:
-        if kad == 4:
+        kad += 1
+        if (not terfi_tikanma) & (kad == 4):
             kad = 1
             der -= 1
     return der, kad
@@ -164,3 +168,36 @@ def terfi_tarhine_gore_personel_listesi(baslangic_tarihi=None, bitis_tarihi=None
             personeller[personel.key] = p_data
 
     return personeller
+
+def terfi_durum_kontrol(personel_id):
+    """
+    :param personel_id:
+    :return: terfi_kontrol (bool) : İlgili personelin terfisinin durup durmadığını belirtir.
+    """
+    personel = Personel.objects.get(personel_id)
+    baslangic_tarih = datetime.date.today() - datetime.timedelta(days=1)
+    bitis_tarih = datetime.date.today() + datetime.timedelta(days=1)
+    terfi_kontrol = False
+    try:
+        askerlik_kayit = AskerlikKayitlari.objects.get(
+            personel_id = personel_id,
+            baslama_tarihi__gte = baslangic_tarih,
+            bitis_tarihi__lte = bitis_tarih
+        )
+        ucretsiz_izin = UcretsizIzin.objects.get(
+            personel_id = personel_id,
+            baslangic_tarih__gte = baslangic_tarih,
+            bitis_tarihi__lte = bitis_tarih
+        )
+        # TODO : Personelin ceza durumu kontrol edilecek
+        if not personel.aday_memur:
+            terfi_kontrol = True
+    except ObjectDoesNotExist:
+        terfi_kontrol = True
+
+def terfi_tikanma_kontrol(personel_id):
+    personel = Personel.objects.get(personel_id)
+    if personel.gorev_ayligi_derece == personel.kadro_derece:
+        return True
+    else:
+        return False
