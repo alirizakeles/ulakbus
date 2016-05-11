@@ -6,10 +6,9 @@
 # This file is licensed under the GNU General Public License v3
 # (GPLv3).  See LICENSE.txt for details.
 
-import datetime
-from ulakbus.models import Personel, AskerlikKayitlari, UcretsizIzin
 from dateutil.relativedelta import relativedelta
 from pyoko.exceptions import ObjectDoesNotExist
+import datetime
 
 __author__ = 'Ali Riza Keles'
 
@@ -174,6 +173,9 @@ def terfi_durum_kontrol(personel_id):
     :param personel_id:
     :return: terfi_kontrol (bool) : İlgili personelin terfisinin durup durmadığını belirtir.
     """
+
+    from ulakbus.models import Personel, AskerlikKayitlari, UcretsizIzin
+
     personel = Personel.objects.get(personel_id)
     baslangic_tarih = datetime.date.today() - datetime.timedelta(days=1)
     bitis_tarih = datetime.date.today() + datetime.timedelta(days=1)
@@ -196,6 +198,9 @@ def terfi_durum_kontrol(personel_id):
         terfi_kontrol = True
 
 def terfi_tikanma_kontrol(personel_id):
+
+    from ulakbus.models import Personel
+
     personel = Personel.objects.get(personel_id)
     if personel.gorev_ayligi_derece == personel.kadro_derece:
         return True

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://activiti.org/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="_dxj0QBXKEeavD6749BY1SA" exporter="camunda modeler" exporterVersion="2.7.0" targetNamespace="http://activiti.org/bpmn">
   <bpmn2:collaboration id="_Collaboration_5">
-    <bpmn2:participant id="tekil_personel_terfi_pool" name="Tekil Personel Terfi" processRef="personel_terfi"/>
+    <bpmn2:participant id="tekil_personel_terfi_pool" name="Tekil Personel Terfi" processRef="tekil_personel_terfi"/>
   </bpmn2:collaboration>
-  <bpmn2:process id="personel_terfi" name="Personel Terfi" isExecutable="false">
+  <bpmn2:process id="tekil_personel_terfi" name="Personel Terfi" isExecutable="false">
     <bpmn2:laneSet id="LaneSet_1" name="Lane Set 1">
       <bpmn2:lane id="sube_muduru_lane" name="Şube Müdürü">
         <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
@@ -74,7 +74,7 @@
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
     </bpmn2:userTask>
     <bpmn2:sequenceFlow id="SequenceFlow_9" name="" sourceRef="taraflari_bilgilendir" targetRef="onay_belgesi_uret"/>
-    <bpmn2:serviceTask id="aciklama_gonder" name="Açıklama Gönder">
+    <bpmn2:serviceTask id="aciklama_gonder" camunda:class="personel.kadro.TerfiIslemleri.red_aciklama_kaydet" name="Açıklama Gönder">
       <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
     </bpmn2:serviceTask>
