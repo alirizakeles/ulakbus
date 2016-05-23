@@ -9,17 +9,24 @@
 
 __author__ = 'Mithat Raşit Özçıkrıkcı'
 
+from ulakbus.models import User, Personel
 from zengine.lib.test_utils import BaseTestCase
-from ulakbus.models import User
 
 class TestCase(BaseTestCase):
 
-	def test_terfisi_tikanan_personel(self):
-		""" 
-			Terfisi duran personelin listelendiği bir rapordur.
-		"""
-		user = User.objects.get(username="mithat")
-		self.prepare_client("generic_reporter", user=user)
-		res = self.client.post(model="TerfisiTikananPersonel")
-		assert "object" in res.json
-		assert len(res.json["object"]["fields"]) == 1
+    def test_terfisi_tikanan_personel(self):
+        """
+        generic_reporter iş akışı başlatıldıktan sonra;
+        Terfisi duran personeller listelinir.
+        Sunucudan dönen terfisi tıkanan personel sayısı ile veritabanından çekilen
+        terfisi tıkanan personel sayıları karşılaştırlıp test edilir.
+
+        """
+
+        user = User.objects.get(username="personel_isleri_1")
+        self.prepare_client("generic_reporter", user=user)
+        res = self.client.post(model="TerfisiTikananPersonel")
+        p_query = Personel.objects.set_params(
+            fq="{!frange l=0 u=0 incu=true}sub(gorev_ayligi_derece,kadro_derece)").filter(gorev_ayligi_kademe__gte=4)
+        assert "object" in res.json
+        assert len(res.json["object"]["fields"]) == len(p_query)
