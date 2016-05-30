@@ -91,7 +91,7 @@ class KadroObjectForm(JsonForm):
                 "groups": [
                     {
                         "group_title": "Ünvan ve Derece",
-                        "items": ['unvan', 'derece', 'unvan_kod'],
+                        "items": ['unvan', 'derece', 'unvan_aciklama'],
                         "collapse": True,
                     }
                 ]
