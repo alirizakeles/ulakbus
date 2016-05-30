@@ -344,7 +344,7 @@ class TerfiForm(JsonForm):
             )
 
 
-class   TerfiDuzenleForm(JsonForm):
+class TerfiDuzenleForm(JsonForm):
     class Meta:
         inline_edit = [
             'yeni_gorev_ayligi_derece', 'yeni_gorev_ayligi_kademe', 'yeni_gorev_ayligi_gorunen',
@@ -562,6 +562,8 @@ class TerfiListe(CrudView):
     def taraflari_bilgilendir(self):
         msg = {"title": 'Personel Terfi Islemi Onaylandi!',
                "body": 'Onay Belgesi icin Personel Islerine Gonderildi.'}
+        self.current.output['msgbox'] = msg
+        self.current.task_data['LANE_CHANGE_MSG'] = msg
 
     def onay_belgesi_uret(self):
         self.current.output['msgbox'] = {
