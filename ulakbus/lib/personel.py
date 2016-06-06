@@ -179,23 +179,33 @@ def terfi_durum_kontrol(personel_id):
     personel = Personel.objects.get(personel_id)
     baslangic_tarih = datetime.date.today() - datetime.timedelta(days=1)
     bitis_tarih = datetime.date.today() + datetime.timedelta(days=1)
-    terfi_kontrol = False
+    askerlik_kontrol = False
+    ucretsiz_izin_kontrol = False
+    aday_memur_kontrol = False
     try:
         askerlik_kayit = AskerlikKayitlari.objects.get(
             personel_id = personel_id,
             baslama_tarihi__gte = baslangic_tarih,
             bitis_tarihi__lte = bitis_tarih
         )
+    except ObjectDoesNotExist:
+        askerlik_kontrol = True
+
+    try:
         ucretsiz_izin = UcretsizIzin.objects.get(
             personel_id = personel_id,
             baslangic_tarih__gte = baslangic_tarih,
             bitis_tarihi__lte = bitis_tarih
         )
-        # TODO : Personelin ceza durumu kontrol edilecek
-        if not personel.aday_memur:
-            terfi_kontrol = True
     except ObjectDoesNotExist:
-        terfi_kontrol = True
+        ucretsiz_izin_kontrol = True
+
+    if not personel.aday_memur:
+        aday_memur_kontrol = True
+
+    # TODO : Personelin ceza durumu kontrol edilecek
+
+    return (askerlik_kontrol and ucretsiz_izin_kontrol and aday_memur_kontrol)
 
 def terfi_tikanma_kontrol(personel_id):
 

@@ -65,8 +65,8 @@ from dateutil.relativedelta import relativedelta
 from pyoko import ListNode
 from pyoko.exceptions import ObjectDoesNotExist
 from ulakbus.lib.personel import terfi_tarhine_gore_personel_listesi, suren_terfi_var_mi
-from ulakbus.lib.personel import terfi_durum_kontrol, derece_ilerlet, terfi_tikanma_kontrol
-from ulakbus.models import Personel
+from ulakbus.lib.personel import terfi_durum_kontrol, derece_ilerlet, terfi_tikanma_kontrol, gorunen_kademe_hesapla
+from ulakbus.models import Personel, Permission, User
 from zengine.forms import JsonForm
 from zengine.forms import fields
 from zengine.views.crud import CrudView, obj_filter
@@ -620,91 +620,113 @@ class TerfiIslemleri(CrudView):
     def terfi_form(self):
         self.current.task_data["personel_id"] = self.current.input["id"]
         personel = Personel.objects.get(self.current.task_data["personel_id"])
-        if not suren_terfi_var_mi(personel.key):
+        self.current.task_data["tckn"] = personel.tckn
+        self.current.task_data["ad_soyad"] = "%s %s"%(personel.ad, personel.soyad)
+        if suren_terfi_var_mi(personel.key):
             self.current.output['msgbox'] = {
-                'type': 'info', "title": 'HATA !',
+                'type': 'error', "title": 'HATA !',
                 "msg": '%s %s isim soyisimli personelin devam eden bir terfi süreci bulunmaktadır' % (
                     personel.ad, personel.soyad)
             }
         else:
             if terfi_durum_kontrol(personel.key):
+                eski_gorev_ayligi_kademe = personel.gorev_ayligi_kademe
+                eski_gorev_ayligi_derece = personel.gorev_ayligi_derece
+                eski_kazanilmis_hak_kademe = personel.kazanilmis_hak_kademe
+                eski_kazanilmis_hak_derece = personel.kazanilmis_hak_derece
+                eski_emekli_muktesebat_kademe = personel.emekli_muktesebat_kademe
+                eski_emekli_muktesebat_derece = personel.emekli_muktesebat_derece
+
                 terfi_tikanma = terfi_tikanma_kontrol(personel.key)
+
                 personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe = derece_ilerlet(
                     personel.kadro_derece,
                     personel.gorev_ayligi_derece,
-                    personel.gorev_ayligi_kademe
+                    personel.gorev_ayligi_kademe,
+                    terfi_tikanma
                 )
                 personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe = derece_ilerlet(
                     personel.kadro_derece,
                     personel.kazanilmis_hak_derece,
-                    personel.kazanilmis_hak_kademe
+                    personel.kazanilmis_hak_kademe,
+                    False
                 )
                 personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe = derece_ilerlet(
                     personel.kadro_derece,
                     personel.emekli_muktesebat_derece,
-                    personel.emekli_muktesebat_kademe
+                    personel.emekli_muktesebat_kademe,
+                    False
                 )
-                _form = TerfiIslemForm(
-                    current = self.current,
-                    title = "Terfi İşlemleri",
-                    key = personel.key,
-                    tckn = personel.tckn,
-                    ad_soyad = "%s %s"%(personel.ad, personel.soyad),
-                    kadro_derece = personel.kadro_derece,
-                    gorev_ayligi = "%s/%s"%(personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe),
-                    kazanilmis_hak = "%s/%s"%(personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe),
-                    emekli_muktesebat = "%s/%s"%(personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe),
-                    yeni_gorev_ayligi_derece = personel.gorev_ayligi_derece,
-                    yeni_gorev_ayligi_kademe = personel.gorev_ayligi_kademe,
-                    yeni_gorev_ayligi_gorunen = personel.gorev_ayligi_kademe,
-                    yeni_kazanilmis_hak_derece = personel.kazanilmis_hak_derece,
-                    yeni_kazanilmis_hak_kademe = personel.kazanilmis_hak_kademe,
-                    yeni_kazanilmis_hak_gorunen = personel.kazanilmis_hak_kademe,
-                    yeni_emekli_muktesebat_derece = personel.emekli_muktesebat_derece,
-                    yeni_emekli_muktesebat_kademe = personel.emekli_muktesebat_kademe,
-                    yeni_emekli_muktesebat_gorunen = personel.emekli_muktesebat_kademe
-                )
+                _form = TerfiIslemForm(current = self.current, title = "Terfi İşlemleri")
+                _form.key = personel.key
+                _form.ad_soyad = "%s %s"%(personel.ad, personel.soyad)
+                _form.tckn = personel.tckn
+                _form.kadro_derece = personel.kadro_derece
+                _form.gorev_ayligi = "%s/%s"%(eski_gorev_ayligi_derece, eski_gorev_ayligi_kademe),
+                _form.kazanilmis_hak = "%s/%s"%(eski_kazanilmis_hak_derece, eski_kazanilmis_hak_kademe)
+                _form.emekli_muktesebat = "%s/%s"%(eski_emekli_muktesebat_derece,
+                                                   eski_emekli_muktesebat_kademe)
+                _form.yeni_gorev_ayligi_derece = personel.gorev_ayligi_derece
+                _form.yeni_gorev_ayligi_kademe = personel.gorev_ayligi_kademe
+                _form.yeni_gorev_ayligi_gorunen = gorunen_kademe_hesapla(personel.gorev_ayligi_derece,
+                                                                         personel.gorev_ayligi_kademe)
+                _form.yeni_kazanilmis_hak_derece = personel.kazanilmis_hak_derece
+                _form.yeni_kazanilmis_hak_kademe = personel.kazanilmis_hak_kademe
+                _form.yeni_kazanilmis_hak_gorunen = gorunen_kademe_hesapla(personel.kazanilmis_hak_derece,
+                                                                           personel.kazanilmis_hak_kademe)
+                _form.yeni_emekli_muktesebat_derece = personel.emekli_muktesebat_derece
+                _form.yeni_emekli_muktesebat_kademe = personel.emekli_muktesebat_kademe
+                _form.yeni_emekli_muktesebat_gorunen = gorunen_kademe_hesapla(personel.emekli_muktesebat_derece,
+                                                                              personel.emekli_muktesebat_kademe)
+                self.current.task_data["islem_gerceklestiren_personel_id"] = self.current.user.key
                 self.form_out(_form)
             else:
                 self.current.output['msgbox'] = {
-                    'type': 'info', "title": 'HATA !',
-                    "msg": '%s %s isim soyisimli personelin devam eden bir terfi süreci bulunmaktadır' % (
+                    'type': 'error', "title": 'HATA !',
+                    "msg": '%s %s isim soyisimli personelin terfisi durdurulmuştur' % (
                         personel.ad, personel.soyad)
                 }
 
     def kaydet_onaya_gonder(self):
-        self.current.task_data["personel_id"] = self.current.input["form"]["personel_id"]
+        self.current.task_data["personel_id"] = self.current.input["form"]["key"]
         self.current.task_data["yeni_gorev_ayligi_derece"] = self.current.input["form"]["yeni_gorev_ayligi_derece"]
         self.current.task_data["yeni_gorev_ayligi_kademe"] = self.current.input["form"]["yeni_gorev_ayligi_kademe"]
         self.current.task_data["yeni_kazanilmis_hak_derece"] = self.current.input["form"]["yeni_kazanilmis_hak_derece"]
         self.current.task_data["yeni_kazanilmis_hak_kademe"] = self.current.input["form"]["yeni_kazanilmis_hak_kademe"]
         self.current.task_data["yeni_emekli_muktesebat_derece"] = self.current.input["form"]["yeni_emekli_muktesebat_derece"]
         self.current.task_data["yeni_emekli_muktesebat_kademe"] = self.current.input["form"]["yeni_emekli_muktesebat_kademe"]
+        personel = Personel.objects.get(self.current.task_data["personel_id"])
+        user_permission = None
+        if personel.personel_turu == 1:
+            user_permission = Permission.objects.get(name = "akademik_personel_terfi_onay")
+        elif personel.personel_turu == 2:
+            user_permission = Permission.objects.get(name="idari_personel_terfi_onay")
+        user_list = user_permission.get_permitted_users()
+        self.current.invite_other_parties(user_list)
+        msg = {"title": 'İşlem Gerçekleştirildi!',
+               "body": 'Terfi işlemi, onay sürecine girmiştir.'}
+        self.current.task_data["LANE_CHANGE_MSG"] = msg
 
     def terfi_kontrol(self):
         personel = Personel.objects.get(self.current.task_data["personel_id"])
-        _form = TerfiOnayForm(
-            current = self.current,
-            title = "Terfi Kontrol",
-            key = personel.key,
-            tckn = personel.tckn,
-            ad_soyad = "%s %s"%(personel.ad, personel.soyad),
-            kadro_derece = personel.kadro_derece,
-            gorev_ayligi = "%s/%s"%(personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe),
-            kazanilmis_hak = "%s/%s"%(personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe),
-            emekli_muktesebat = "%s/%s"%(personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe),
-            yeni_gorev_ayligi = "%s/%s"%(
-                self.current.task_data["yeni_gorev_ayligi_derece"],
-                self.current.task_data["yeni_gorev_ayligi_kademe"]
-            ),
-            yeni_kazanilmis_hak = "%s/%s"%(
-                self.current.task_data["yeni_kazanilmis_hak_derece"],
-                self.current.task_data["yeni_kazanilmis_hak_kademe"]
-            ),
-            yeni_emekli_muktesebat = "%s/%s"%(
-                self.current.task_data["yeni_emekli_muktesebat_derece"],
-                self.current.task_data["yeni_emekli_muktesebat_kademe"]
-            )
+        _form = TerfiOnayForm(current = self.current, title = "Terfi Kontrol")
+        _form.tckn = personel.tckn
+        _form.ad_soyad = "%s/%s"%(personel.ad, personel.soyad)
+        _form.kadro_derece = personel.kadro_derece
+        _form.gorev_ayligi = "%s/%s"%(personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe)
+        _form.kazanilmis_hak = "%s/%s"%(personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe)
+        _form.emekli_muktesebat = "%s/%s"%(personel.emekli_muktesebat_derece, personel.emekli_muktesebat_kademe)
+        _form.yeni_gorev_ayligi = "%s/%s"%(
+            self.current.task_data["yeni_gorev_ayligi_derece"],
+            self.current.task_data["yeni_gorev_ayligi_kademe"]
+        )
+        _form.yeni_kazanilmis_hak = "%s/%s"%(
+            self.current.task_data["yeni_kazanilmis_hak_derece"],
+            self.current.task_data["yeni_kazanilmis_hak_kademe"]
+        )
+        _form.yeni_emekli_muktesebat = "%s/%s"%(
+            self.current.task_data["yeni_emekli_muktesebat_derece"],
+            self.current.task_data["yeni_emekli_muktesebat_kademe"]
         )
 
         self.form_out(_form)
@@ -729,9 +751,42 @@ class TerfiIslemleri(CrudView):
 
     def red_aciklama_kaydet(self):
         self.current.task_data["red_aciklama"] = self.current.input["form"]["red_aciklama"]
+        user = User.objects.filter(key = self.current.task_data["islem_gerceklestiren_personel_id"])
+        self.current.invite_other_parties(user)
+        msg = {
+            "title" : "TERFİ İŞLEMİ SONUÇ BİLGİSİ",
+            "body" : "Terfi işlemi reddedildi"
+        }
+        self.current.task_data["LANE_CHANGE_MSG"] = msg
+
+
+    def red_aciklama_goster(self):
+        self.current.output['msgbox'] = {
+            'type': 'error', "title": 'HATA !',
+            "msg": '%s T.C. No ve %s isim soyisimli personelin terfi işlemi reddedilmiştir.' % (
+                self.current.task_data["tckn"], self.current.task_data["ad_soyad"])
+        }
+
+        self.current.output['msgbox'] = {
+            'type' : 'error', 'title' : 'AÇIKLAMA',
+            "msg" : self.current.task_data["red_aciklama"]
+        }
 
     def taraflari_bilgilendir(self):
-        pass
+        msg = {
+            'type' : 'info', 'title' : 'TERFİ İŞLEMİ SONUÇ BİLGİSİ',
+            'msg' : 'Terfi işleminiz gerçekleştirilmiştir.'
+        }
+
+        self.current.task_data["LANE_CHANGE_MSG"] = msg
+
+        self.current.output['msgbox'] = {
+            'type' : 'info', 'title' : 'TERFİ İŞLEMİ SONUÇ BİLGİSİ',
+            'msg' : '%s T.C. No %s isim soyisimli personelin terfisi gerçekleştirilmiştir'%(
+                self.current.task_data["tckn"],
+                self.current.task_data["ad_soyad"]
+            )
+        }
 
     def onay_belgesi_uret(self):
         self.current.output['msgbox'] = {
