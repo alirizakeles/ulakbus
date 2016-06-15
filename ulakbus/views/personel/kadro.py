@@ -573,51 +573,81 @@ class TerfiListe(CrudView):
         }
 
 class TerfiIslemForm(JsonForm):
+    """
+        Tek bir personel üzerinde yapılacak olan terfi işlemi için oluşturulmuş
+        JsonForm class dan extend edilerek oluşturulmuş bir class dır.
+
+    """
     key = fields.String("Key", hidden=True)
     tckn = fields.String("T.C. No")
     ad_soyad = fields.String("İsim")
     kadro_derece = fields.String("Kadro Derece")
 
-    gorev_ayligi = fields.String("GA")
-    kazanilmis_hak = fields.String("KH")
-    emekli_muktesebat = fields.String("EM")
+    # Burada personelin şimdiki kadro ve dereceleride gösterilir.
+    gorev_ayligi = fields.String("Görev Aylığı")
+    kazanilmis_hak = fields.String("Kazanılmış Hak")
+    emekli_muktesebat = fields.String("Emekli Müktesebat")
 
-    yeni_gorev_ayligi_derece = fields.Integer("GAD")
-    yeni_gorev_ayligi_kademe = fields.Integer("GAK")
-    yeni_gorev_ayligi_gorunen = fields.Integer("GAG")
+    # Burada da personelin terfiden sonraki kademe ve derece durumlarının sistem tarafından hesaplanmış hali vardır.
+    yeni_gorev_ayligi_derece = fields.Integer("Yeni Görev Aylığı Derece")
+    yeni_gorev_ayligi_kademe = fields.Integer("Yeni Görev Aylığı Kademe")
+    yeni_gorev_ayligi_gorunen = fields.Integer("Görünen Görev Aylığı Kademe")
 
-    yeni_kazanilmis_hak_derece = fields.Integer("KHD")
-    yeni_kazanilmis_hak_kademe = fields.Integer("KHK")
-    yeni_kazanilmis_hak_gorunen = fields.Integer("KHG")
+    yeni_kazanilmis_hak_derece = fields.Integer("Yeni Kazanılmış Hak Derece")
+    yeni_kazanilmis_hak_kademe = fields.Integer("Yeni Kazanılmış Hak Kademe")
+    yeni_kazanilmis_hak_gorunen = fields.Integer("Görünen Kazanılmış Hak Kademe")
 
-    yeni_emekli_muktesebat_derece = fields.Integer("EMD")
-    yeni_emekli_muktesebat_kademe = fields.Integer("EMK")
-    yeni_emekli_muktesebat_gorunen = fields.Integer("EMG")
+    yeni_emekli_muktesebat_derece = fields.Integer("Yeni Emekli Müktesebat Derece")
+    yeni_emekli_muktesebat_kademe = fields.Integer("Yeni Emekli Müktesebat Kademe")
+    yeni_emekli_muktesebat_gorunen = fields.Integer("Görünen Emekli Müktesebat Kademe")
 
     devam = fields.Button("Devam Et", cmd="kaydet")
 
 class TerfiOnayForm(JsonForm):
+    """
+        Personel Daire başkanlığı tarafından terfisi gerçekleştirilmiş bir personelin
+        terfiden sonraki derece ve kademe durumlarının onay veya red için genel sekreterlik veya
+        rektör tarafından görüntülendiği formdur.
+
+    """
     key = fields.String("Key", hidden=True)
     tckn = fields.String("TCK No")
     ad_soyad = fields.String("Ad")
     kadro_derece = fields.String("Kadro Derece")
 
-    gorev_ayligi = fields.String("GA")
-    kazanilmis_hak = fields.String("KH")
-    emekli_muktesebat = fields.String("EM")
+    # TerfiIslemForm class da olduğu gibi personelin terfiden önceki derece ve kademe durumunu ifade eder.
+    gorev_ayligi = fields.String("Görev Aylığı")
+    kazanilmis_hak = fields.String("Kazanılmış Hak")
+    emekli_muktesebat = fields.String("Emekli Müktesebat")
 
-    yeni_gorev_ayligi = fields.String("Yeni GA")
-    yeni_kazanilmis_hak = fields.String("Yeni KH")
-    yeni_emekli_muktesebat = fields.String("Yeni EM")
+    # Personelin terfiden sonraki kademe ve derece durumunu ifade eder.
+    yeni_gorev_ayligi = fields.String("Yeni Görev Aylığı")
+    yeni_kazanilmis_hak = fields.String("Yeni Kazanılmış Hak")
+    yeni_emekli_muktesebat = fields.String("Yeni Emekli Müktesebat")
 
     onay_buton = fields.Button("Onayla", cmd="terfi_onay")
     red_buton = fields.Button("Red", cmd="terfi_red")
 
 class TerfiIslemleri(CrudView):
+    """
+        Kanunla verilen terfiler gibi tek bir personel üzerinde gerçekleştirilecek olan terfi işlemlerinin
+        gerçekleştirilmesi amacıyla CrudView claas dan extend edilerek oluşturulmuş bir class dır.
+
+    """
     class Meta:
         model = "Personel"
 
     def terfi_form(self):
+        """
+        Bu metod seçilmiş olan personele dair bilgiler veritabanından çekilir. Sonra seçili personel
+        üzerinde bir takım kontroller gerçekleştirilir.
+        Bu kontroller:
+        - Seçili personelin devam eden bir terfi süreci varmı ?
+        - Seçili personelin terfisi durdurulmuşmu ?
+
+        Seçili personel yukarıdaki kontrollerden geçtiği takdirde terfi işlemi gerçekleştirilir.
+
+        """
         self.current.task_data["personel_id"] = self.current.input["id"]
         personel = Personel.objects.get(self.current.task_data["personel_id"])
         self.current.task_data["tckn"] = personel.tckn
@@ -630,6 +660,7 @@ class TerfiIslemleri(CrudView):
             }
         else:
             if terfi_durum_kontrol(personel.key):
+                # Terfi işlemi sırasında seçili personelin terfiden önceki derece ve kademe durumu gösterilmek amacıyla saklanıyor.
                 eski_gorev_ayligi_kademe = personel.gorev_ayligi_kademe
                 eski_gorev_ayligi_derece = personel.gorev_ayligi_derece
                 eski_kazanilmis_hak_kademe = personel.kazanilmis_hak_kademe
@@ -637,14 +668,18 @@ class TerfiIslemleri(CrudView):
                 eski_emekli_muktesebat_kademe = personel.emekli_muktesebat_kademe
                 eski_emekli_muktesebat_derece = personel.emekli_muktesebat_derece
 
+                # Seçili personelin terfi tıkanma durumu kontrol edilip, derece_ilerlet metoduna parametre olarak girilmek amacıyla saklanıyor.
                 terfi_tikanma = terfi_tikanma_kontrol(personel.key)
 
+                # Derece ilerletme işlemlerini lib/ altında tanımlanmış olan derece_ilerlet metoduyla gerçekleştiryoruz.
+                # Terfi tıkanma durumu, derece_ilerlet metoduna üçüncü parametre olarak girilir.
                 personel.gorev_ayligi_derece, personel.gorev_ayligi_kademe = derece_ilerlet(
                     personel.kadro_derece,
                     personel.gorev_ayligi_derece,
                     personel.gorev_ayligi_kademe,
                     terfi_tikanma
                 )
+                #Terfi tıkanma durumu sadece görev aylığına göre kontrol edildiği için kazanılmış hak ve emekli müktesebat için false girilir.
                 personel.kazanilmis_hak_derece, personel.kazanilmis_hak_kademe = derece_ilerlet(
                     personel.kadro_derece,
                     personel.kazanilmis_hak_derece,
@@ -657,6 +692,7 @@ class TerfiIslemleri(CrudView):
                     personel.emekli_muktesebat_kademe,
                     False
                 )
+                # Form nesnesi oluşturulur ve attribute lerin değerleri verilir.
                 _form = TerfiIslemForm(current = self.current, title = "Terfi İşlemleri")
                 _form.key = personel.key
                 _form.ad_soyad = "%s %s"%(personel.ad, personel.soyad)
@@ -681,6 +717,7 @@ class TerfiIslemleri(CrudView):
                 self.current.task_data["islem_gerceklestiren_personel_id"] = self.current.user.key
                 self.form_out(_form)
             else:
+                # Terfisi duran personel için terfi işlemi yapılamayacağına yönelik uyarı mesajı
                 self.current.output['msgbox'] = {
                     'type': 'error', "title": 'HATA !',
                     "msg": '%s %s isim soyisimli personelin terfisi durdurulmuştur' % (
@@ -688,6 +725,13 @@ class TerfiIslemleri(CrudView):
                 }
 
     def kaydet_onaya_gonder(self):
+        """
+            Burada seçili personelin terfi sonrası derece ve kademe durumları belirlendikten sonra
+            Onay aşamasına geçilir. Düzenlenen Kıdem ve kademe durumları henüz onaylanmadığı için
+            task data içerisinde tutulur. Wf nin sonraki aşamasındaki formda da değerler bu task data dan
+            çekilir.
+
+        """
         self.current.task_data["personel_id"] = self.current.input["form"]["key"]
         self.current.task_data["yeni_gorev_ayligi_derece"] = self.current.input["form"]["yeni_gorev_ayligi_derece"]
         self.current.task_data["yeni_gorev_ayligi_kademe"] = self.current.input["form"]["yeni_gorev_ayligi_kademe"]
@@ -697,6 +741,12 @@ class TerfiIslemleri(CrudView):
         self.current.task_data["yeni_emekli_muktesebat_kademe"] = self.current.input["form"]["yeni_emekli_muktesebat_kademe"]
         personel = Personel.objects.get(self.current.task_data["personel_id"])
         user_permission = None
+
+        # Seçili personel eğer akademik personel ise terfiyi onaylayacak kişi rektördür.
+        # Seçili personel eğer idari personel ise terfiyi onaylayacak kişi genel sekreterdir.
+        # Akademik personel için terfi onay permission = akademik_personel_terfi_onay
+        # İdari personel için terfi onay permission = idari_personel_terfi_onay
+
         if personel.personel_turu == 1:
             user_permission = Permission.objects.get(name = "akademik_personel_terfi_onay")
         elif personel.personel_turu == 2:
@@ -708,6 +758,12 @@ class TerfiIslemleri(CrudView):
         self.current.task_data["LANE_CHANGE_MSG"] = msg
 
     def terfi_kontrol(self):
+        """
+            Terfi işlemini onaylayacak olan personelin (rektör veya genel sekreter)
+            seçili personelin (Terfisi yapılacak personel) terfi sonrası ve öncesi derece ve kademe durumlarını
+            görüntülediği terfi işlemini onayladığı veya reddettiği formu görüntüleyen bir metoddur.
+
+        """
         personel = Personel.objects.get(self.current.task_data["personel_id"])
         _form = TerfiOnayForm(current = self.current, title = "Terfi Kontrol")
         _form.tckn = personel.tckn
@@ -732,6 +788,9 @@ class TerfiIslemleri(CrudView):
         self.form_out(_form)
 
     def terfi_onay(self):
+        """
+            Terfi sonrası derece ve kademe durumu veritabanına onaylanma durumunda kaydedilmektedir.
+        """
         personel = Personel.objects.get(self.current.task_data["personel_id"])
         personel.gorev_ayligi_derece = self.current.task_data["yeni_gorev_ayligi_derece"]
         personel.gorev_ayligi_kademe = self.current.task_data["yeni_gorev_ayligi_kademe"]
@@ -740,8 +799,26 @@ class TerfiIslemleri(CrudView):
         personel.emekli_muktesebat_derece = self.current.task_data["yeni_emekli_muktesebat_derece"]
         personel.emekli_muktesebat_kademe = self.current.task_data["yeni_emekli_muktesebat_kademe"]
         personel.save()
+        # Lane değişimi için kullanıcı seçimi
+        user = User.objects.get(key = self.current.task_data["islem_gerceklestiren_personel_id"])
+        # Lane değişim mesajı oluşturuldu
+        msg = {
+            "title" : "TERFİ İŞLEMİ SONUÇ BİLGİSİ",
+            "body" : "%s T.C. No %s isim soyisimli personelin terfisi gerçekleştirilmiştir"%(
+                self.current.task_data["tckn"],
+                self.current.task_data["ad_soyad"]
+            )
+        }
+        self.current.task_data["LANE_CHANGE_MSG"] = msg
+        # Kullanıcı yeni lane e davet ediliyor.
+        self.current.invite_other_parties([user])
 
     def red_aciklama_yaz(self):
+        """
+            Terfi işleminin reddedilmesi durumunda açıklama girilmesi amacıyla çalışacak olan metoddur.
+            Burada yeni bir JsonForm nesnesi türetilerek attributeleri belirlenmektedir.
+            Son olarakda form ekrana basılmaktadır.
+        """
         _form = JsonForm(title="Terfi Islemi Reddedildi.")
         _form.Meta.help_text = """Terfi işlemini onaylamadınız. İlgili personele bir açıklama
                                   yazmak ister misiniz?"""
@@ -750,6 +827,10 @@ class TerfiIslemleri(CrudView):
         self.form_out(_form)
 
     def red_aciklama_kaydet(self):
+        """
+            Burada terfi red açıklaması task data içerisine atılıp, lane değişim mesajı oluşturulmaktadır.
+            Ayrıca ilgili lane kullanıcısına notification gönderilmektedir.
+        """
         self.current.task_data["red_aciklama"] = self.current.input["form"]["red_aciklama"]
         user = User.objects.filter(key = self.current.task_data["islem_gerceklestiren_personel_id"])
         self.current.invite_other_parties(user)
@@ -761,36 +842,39 @@ class TerfiIslemleri(CrudView):
 
 
     def red_aciklama_goster(self):
+        """
+         Work Flow da lane değişimi sırasında terfi işlemini yapan personele giden notificationa tıklanarak
+         çalıştırılan metoddur.
+         Burada amaçlanan, terfi işlemi reddedildiği takdirde terfi red mesajını, terfi işlemini yapan personele
+         göstermektir.
+        """
         self.current.output['msgbox'] = {
             'type': 'error', "title": 'HATA !',
-            "msg": '%s T.C. No ve %s isim soyisimli personelin terfi işlemi reddedilmiştir.' % (
-                self.current.task_data["tckn"], self.current.task_data["ad_soyad"])
-        }
-
-        self.current.output['msgbox'] = {
-            'type' : 'error', 'title' : 'AÇIKLAMA',
-            "msg" : self.current.task_data["red_aciklama"]
+            "msg": '%s T.C. No ve %s isim soyisimli personelin terfi işlemi reddedilmiştir. %s' % (
+                self.current.task_data["tckn"], self.current.task_data["ad_soyad"], self.current.task_data["red_aciklama"])
         }
 
     def taraflari_bilgilendir(self):
-        msg = {
-            'type' : 'info', 'title' : 'TERFİ İŞLEMİ SONUÇ BİLGİSİ',
-            'msg' : 'Terfi işleminiz gerçekleştirilmiştir.'
-        }
-
-        self.current.task_data["LANE_CHANGE_MSG"] = msg
-
-        self.current.output['msgbox'] = {
-            'type' : 'info', 'title' : 'TERFİ İŞLEMİ SONUÇ BİLGİSİ',
-            'msg' : '%s T.C. No %s isim soyisimli personelin terfisi gerçekleştirilmiştir'%(
+        user = User.objects.get(key = self.current.task_data["islem_gerceklestiren_personel_id"])
+        self.current.output["msgbox"] = {
+            "type" : "info",
+            "title" : "TERFİ İŞLEMİ SONUÇ BİLGİSİ",
+            "msg" : "%s T.C. No %s isim soyisimli personelin terfisi gerçekleştirilmiştir"%(
                 self.current.task_data["tckn"],
                 self.current.task_data["ad_soyad"]
             )
         }
+        _form = JsonForm()
+        _form.Meta.help_text = "Onay Belgesi Üretmek İstermisiniz ?"
+        _form.belge_uret_buton = fields.Button("Onay Belgesi Üret")
+        self.form_out(_form)
 
     def onay_belgesi_uret(self):
         self.current.output['msgbox'] = {
             'type': 'info',
             'title': 'Terfi İşlemleri',
-            'msg': 'Toplu terfi İşleminiz Onaylandı'
+            'msg': "%s T.C. No %s isim soyisimli personelin terfisi gerçekleştirilmiştir"%(
+                self.current.task_data["tckn"],
+                self.current.task_data["ad_soyad"]
+            )
         }
