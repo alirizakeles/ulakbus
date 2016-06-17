@@ -849,12 +849,15 @@ class TerfiIslemleri(CrudView):
          göstermektir.
         """
         self.current.output['msgbox'] = {
-            'type': 'error', "title": 'HATA !',
+            'type': 'error', "title": 'Terfi İŞLEMİ SONUÇ BİLGİSİ !',
             "msg": '%s T.C. No ve %s isim soyisimli personelin terfi işlemi reddedilmiştir. %s' % (
                 self.current.task_data["tckn"], self.current.task_data["ad_soyad"], self.current.task_data["red_aciklama"])
         }
 
     def taraflari_bilgilendir(self):
+        """
+            Terfi işlemini gerçekleştiren personele terfi onay mesajını gösteren metoddur.
+        """
         user = User.objects.get(key = self.current.task_data["islem_gerceklestiren_personel_id"])
         self.current.output["msgbox"] = {
             "type" : "info",
@@ -870,6 +873,9 @@ class TerfiIslemleri(CrudView):
         self.form_out(_form)
 
     def onay_belgesi_uret(self):
+        """
+            Terfi Onay belgesi üreten metod.
+        """
         self.current.output['msgbox'] = {
             'type': 'info',
             'title': 'Terfi İşlemleri',
@@ -878,3 +884,5 @@ class TerfiIslemleri(CrudView):
                 self.current.task_data["ad_soyad"]
             )
         }
+
+        # TODO : Belge üretme işlemi daha sonra tamamlanacak.
