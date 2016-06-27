@@ -149,7 +149,7 @@ class TestCase(BaseTestCase):
                 baslangic_tarih__gte = baslangic_tarih,
                 bitis_tarihi__lte = bitis_tarih
             )
-            assert rest.json["msgbox"]["msg"] == akademik_personel_terfi_durma_hata_mesaj
+            assert resp.json["msgbox"]["msg"] == akademik_personel_terfi_durma_hata_mesaj
         except ObjectDoesNotExist:
             pass
 
