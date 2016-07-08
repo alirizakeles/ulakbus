@@ -311,7 +311,7 @@ class Role(Model):
         verbose_name = "Rol"
         verbose_name_plural = "Roller"
         search_fields = ['name']
-        list_fields = []
+        list_fields = ['name','get_user']
 
     @property
     def is_staff(self):

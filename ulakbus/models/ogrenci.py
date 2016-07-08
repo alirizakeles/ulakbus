@@ -669,7 +669,7 @@ class OgrenciDersi(Model):
         app = 'Ogrenci'
         verbose_name = "Ögrenci Dersi"
         verbose_name_plural = "Öğrenci Dersleri"
-        list_fields = ['ders', 'alis_bicimi']
+        list_fields = ['ders_adi', 'alis_bicimi']
         search_fields = ['alis_bicimi', ]
         unique_together = [('ogrenci', 'sube')]
 
@@ -1008,7 +1008,7 @@ class DonemDanisman(Model):
         app = 'Ogrenci'
         verbose_name = "Dönem Danışman"
         verbose_name_plural = "Dönem Danışmanları"
-        list_fields = ['program', 'okutman', 'bolum', 'donem']
+        list_fields = ['__unicode__']
         search_fields = ['aciklama']
 
     def __unicode__(self):
@@ -1031,7 +1031,7 @@ class DondurulmusKayit(Model):
         app = 'Ogrenci'
         verbose_name = "Dondurulmuş Kayıt"
         verbose_name_plural = "Dondurulmuş Kayıtlar"
-        list_fields = ['ogrenci_program', 'baslangic_tarihi', 'aciklama', 'donem']
+        list_fields = ['__unicode__']
         search_fields = ['aciklama', 'baslangic_tarihi']
 
     def __unicode__(self):

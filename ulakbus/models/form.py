@@ -57,7 +57,7 @@ class FormData(Model):
         app = 'Form'
         verbose_name = "Form Data"
         verbose_name_plural = "Form Data"
-        list_fields = ['form', 'data', 'date']
+        list_fields = ['_form', 'data', 'date']
         search_fields = ['data', 'date', 'user']
 
     def _form(self):
