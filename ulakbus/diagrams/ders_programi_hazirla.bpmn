@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_1xz8zp8">
     <bpmn:participant id="Participant_05hd04f" name="DersProgramiHazirla" processRef="ders_programi_hazirla" />
   </bpmn:collaboration>
-  <bpmn:process id="ders_programi_hazirla" name="Ders Programi Hazirla" isExecutable="false">
+  <bpmn:process id="ders_programi_hazirla" name="Ders Programı Hazırla" isExecutable="false">
     <bpmn:sequenceFlow id="SequenceFlow_0xby1l5" sourceRef="coklu_sonuc" targetRef="detay_goster" />
     <bpmn:sequenceFlow id="SequenceFlow_1ozzjo5" sourceRef="detay_goster" targetRef="hatasiz" />
     <bpmn:sequenceFlow id="SequenceFlow_1jfexrt" sourceRef="hatasiz" targetRef="ExclusiveGateway_05cto6g" />

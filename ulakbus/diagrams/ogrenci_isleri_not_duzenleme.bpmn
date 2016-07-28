@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://activiti.org/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_YbKVUP_nEeWNgK3O549odg" targetNamespace="http://activiti.org/bpmn" exporter="camunda modeler" exporterVersion="2.7.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_YbKVUP_nEeWNgK3O549odg" targetNamespace="http://activiti.org/bpmn" exporter="camunda modeler" exporterVersion="2.7.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:collaboration id="_Collaboration_6">
     <bpmn2:extensionElements>
       <camunda:properties>
@@ -8,7 +8,7 @@
     </bpmn2:extensionElements>
     <bpmn2:participant id="_Participant_6" name="NotDuzenleme" processRef="ogrenci_isleri_not_duzenleme" />
   </bpmn2:collaboration>
-  <bpmn2:process id="ogrenci_isleri_not_duzenleme" isExecutable="false">
+  <bpmn2:process id="ogrenci_isleri_not_duzenleme" name="Not Düzenleme" isExecutable="false">
     <bpmn2:laneSet id="LaneSet_2" name="Lane Set 2">
       <bpmn2:lane id="Lane_2" name="Personel">
         <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
