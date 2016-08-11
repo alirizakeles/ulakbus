@@ -10,10 +10,13 @@ from zengine.forms import fields
 from . import RoomType, Okutman, Room, Sube, Donem, Unit, Ders, HAFTA, OgrenciDersi
 
 class DersEtkinligi(Model):
+    """
 
+    """
     class Meta:
         verbose_name = "Ders Etkinliği"
-        search_fields = ['unit_yoksis_no', 'room', 'okutman']
+        verbose_name_plural = "Ders Etkinlikleri"
+        search_fields = ['unit_yoksis_no']
 
     solved = fields.Boolean('Ders Planı Çözüm Durumu', index=True)
     unitime_key = fields.String(index=True) #class id
@@ -52,10 +55,13 @@ class DersEtkinligi(Model):
 
 
 class SinavEtkinligi(Model):
+    """
 
+    """
     class Meta:
         verbose_name = 'Sınav Etkinliği'
-        search_field = ['bolum', 'ders', 'sube', 'donem']
+        verbose_name_plural = "Sınav Etkinlikleri"
+        search_field = ['tarih']
 
     sube = Sube('Şube', index=True)
     ders = Ders('Ders', index=True)
@@ -67,9 +73,9 @@ class SinavEtkinligi(Model):
     published = fields.Boolean('Sınav Planı Yayınlanma Durumu', index=True, default=False)
     tarih = fields.DateTime('Sınav Tarihi', index=True)
 
-
     class SinavYerleri(ListNode):
         room = Room('Sınav Yeri', index=True)
+
 
 def ogrenci_sinav_etkinligi_getir(ogrenci):
 
@@ -92,6 +98,7 @@ def ogrenci_sinav_etkinligi_getir(ogrenci):
             sinav_etkinlikleri.append(etkinlik)
 
     return sinav_etkinlikleri
+
 
 def okutman_sinav_etkinligi_getir(okutman):
     guncel_donem = Donem.objects.get(guncel=True)

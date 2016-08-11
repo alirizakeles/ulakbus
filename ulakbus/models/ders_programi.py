@@ -42,11 +42,12 @@ GUN_DILIMI = [
 
 HAFTA = HAFTA_ICI_GUNLER + HAFTA_SONU_GUNLER
 
-class ZamanDilimleri(Model):
 
+class ZamanDilimleri(Model):
     class Meta:
         unique_together = [('birim', 'gun_dilimi')]
-        search_fields = ['birim', 'gun_dilimi']
+        search_fields = ['gun_dilimi']
+        verbose_name_plural = "Zaman Dilimleri"
 
     birim = Unit('Bölüm')
     gun_dilimi = field.Integer('Gün Dilimi', choices=GUN_DILIMI, index=True)
@@ -67,8 +68,11 @@ class ZamanDilimleri(Model):
         self.zaman_dilimi_suresi = int(self.bitis_saat) - int(self.baslama_saat)
 
     def __unicode__(self):
-        return '%s - %s:%s|%s:%s' % (dict(GUN_DILIMI)[int(self.gun_dilimi)], self.baslama_saat,
-                                     self.baslama_dakika, self.bitis_saat, self.bitis_dakika)
+        try:
+            return '%s - %s:%s|%s:%s' % (dict(GUN_DILIMI)[int(self.gun_dilimi)], self.baslama_saat,
+                                         self.baslama_dakika, self.bitis_saat, self.bitis_dakika)
+        except TypeError:
+            return str(self.key)
 
 
 class OgElemaniZamanPlani(Model):
@@ -80,7 +84,7 @@ class OgElemaniZamanPlani(Model):
         verbose_name = 'Öğretim Elemanı Zaman Kaydı'
         verbose_name_plural = 'Öğretim Elemanı Zaman Kayıtları'
         unique_together = [('okutman', 'birim')]
-        search_fields = ['okutman', 'birim']
+        search_fields = []
 
     okutman = Okutman("Öğretim Elemanı")
     birim = Unit("Birim")
@@ -97,8 +101,9 @@ class ZamanCetveli(Model):
     """
     class Meta:
         verbose_name = 'Zaman Cetveli'
+        verbose_name_plural = "Zaman Cetvelleri"
         unique_together = [('zaman_dilimi', 'ogretim_elemani_zaman_plani', 'gun')]
-        search_fields = ['zaman_dilimi', 'ogretim_elemani_zaman_plani', 'birim', 'gun', 'durum']
+        search_fields = ['gun', 'durum']
 
     birim = Unit("Birim")
     gun = field.Integer("Gün", choices=HAFTA, index=True)
@@ -115,8 +120,9 @@ class DerslikZamanPlani(Model):
 
     class Meta:
         verbose_name = 'Derslik Zaman Planı'
+        verbose_name_plural = 'Derslik Zaman Planları'
         unique_together = [('derslik', 'gun', 'baslangic_saat', 'baslangic_dakika', 'bitis_saat', 'bitis_dakika')]
-        search_fields = ['unit', 'derslik', 'gun', 'derslik_durum']
+        search_fields = ['gun', 'derslik_durum']
 
     unit = Unit()
     derslik = Room()
@@ -128,7 +134,10 @@ class DerslikZamanPlani(Model):
     derslik_durum = field.Integer("Durum", choices=DERSLIK_DURUMU, index=True)
 
     def __unicode__(self):
-        return '%s %s %s:%s|%s:%s %s' % (self.derslik, dict(HAFTA)[self.gun],
-                                         self.baslangic_saat, self.baslangic_dakika,
-                                         self.bitis_saat, self.bitis_dakika,
-                                         dict(DERSLIK_DURUMU)[self.derslik_durum])
+        try:
+            return '%s %s %s:%s|%s:%s %s' % (self.derslik, dict(HAFTA)[self.gun],
+                                             self.baslangic_saat, self.baslangic_dakika,
+                                             self.bitis_saat, self.bitis_dakika,
+                                             dict(DERSLIK_DURUMU)[self.derslik_durum])
+        except KeyError:
+            return str(self.key)

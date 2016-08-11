@@ -106,7 +106,7 @@ class RoomType(Model):
         verbose_name = "Oda Tipi"
         verbose_name_plural = "Oda Tipleri"
         search_fields = ['type', 'notes']
-        list_fields = ['type', ]
+        list_fields = ['type']
 
     def __unicode__(self):
         return '%s' % self.type

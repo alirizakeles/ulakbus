@@ -509,9 +509,8 @@ class Atama(Model):
         app = 'Personel'
         verbose_name = "Atama"
         verbose_name_plural = "Atamalar"
-        list_fields = ['hizmet_sinif', 'gorev_suresi_baslama', 'ibraz_tarihi',
-                       'durum']
-        search_fields = ['hizmet_sinif', 'statu']
+        list_fields = ['hizmet_sinifi', 'ibraz_tarihi', 'durum']
+        search_fields = ['hizmet_sinifi', 'atama_aciklama', 'goreve_baslama_tarihi']
 
     def __unicode__(self):
         return '%s %s %s' % (self.personel.kurum_sicil_no,

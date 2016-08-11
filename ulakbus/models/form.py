@@ -57,11 +57,13 @@ class FormData(Model):
         app = 'Form'
         verbose_name = "Form Data"
         verbose_name_plural = "Form Data"
-        list_fields = ['_form', 'data', 'date']
-        search_fields = ['data', 'date', 'user']
+        list_fields = ['formun_adini_getir', 'data', 'date']
+        search_fields = ['data', 'date']
 
-    def _form(self):
-        return "%s" % self.form
+    def formun_adini_getir(self):
+        return "%s" % self.form.ad
+
+    formun_adini_getir.title = "Formun Adı"
 
     def __unicode__(self):
         return '%s %s' % (self.form, self.date)

@@ -288,7 +288,7 @@ class Role(Model):
         verbose_name = "Rol"
         verbose_name_plural = "Roller"
         search_fields = ['name']
-        list_fields = ['name','get_user']
+        list_fields = ['name', 'get_user']
 
     @property
     def is_staff(self):
@@ -303,7 +303,9 @@ class Role(Model):
         Returns:
             object: user nesnesi
         """
-        return self.user
+        return self.user.full_name
+
+    get_user.title = "Kullanıcı"
 
     def __unicode__(self):
         return "Role %s" % self.name or (self.key if self.is_in_db() else '')

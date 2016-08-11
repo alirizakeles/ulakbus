@@ -22,6 +22,7 @@ from .auth import Unit
 from .buildings_rooms import Room, RoomType
 from .personel import Personel
 
+
 class HariciOkutman(Model):
     """Harici Okutman Modeli
 
@@ -198,13 +199,19 @@ class OgretimYili(Model):
     yil = field.Integer("Yıl")  # 2015
     ad = field.String("Öğretim Yılı")  # 2015 - 2016 Öğretim Yılı
 
+    class Meta:
+        app = "Ogrenci"
+        verbose_name = "Öğretim Yılı"
+        verbose_name_plural = "Öğretim Yılları"
+
     def post_creation(self):
         self.yil = Donem.guncel_donem().baslangic_tarihi.year
         self.ad = "%s - %s Öğretim Yılı" % (self.yil, self.yil + 1 )
         self.save()
 
     def __unicode__(self):
-        return self.ad
+
+        return "%s" % self.ad
 
 
 class Donem(Model):
@@ -274,6 +281,7 @@ class Donem(Model):
             donem_list[0],donem_list[1] = donem_list[1], donem_list[0]
 
         return donem_list
+
 
 class Program(Model):
     """Program Modeli
@@ -1054,8 +1062,18 @@ class AkademikTakvim(Model):
         app = 'Ogrenci'
         verbose_name = "Akademik Takvim"
         verbose_name_plural = "Akademik Takvimler"
-        list_fields = ['_birim', 'ogretim_yili']
-        # search_fields = ['yil']
+        list_fields = ['birim_adini_getir', 'kayitli_oldugu_donemi_getir']
+        search_fields = ['yil']
+
+    def birim_adini_getir(self):
+        return self.birim.name
+
+    birim_adini_getir.title = "Birim"
+
+    def kayitli_oldugu_donemi_getir(self):
+        return self.ogretim_yili.yil
+
+    kayitli_oldugu_donemi_getir.title = "Öğretim Yılı"
 
     def _birim(self):
         return "%s" % self.birim
@@ -1106,7 +1124,7 @@ class Takvim(Model):
         verbose_name_plural = "Takvimler"
 
     def __unicode__(self):
-        return '%s %s %s' % (self.akademik_takvim.birim, self.akademik_takvim.ogretim_yili, self.etkinlik)
+        return '{0} {1} {2}'.format(self.akademik_takvim.birim, self.akademik_takvim.ogretim_yili, self.etkinlik)
 
     @staticmethod
     def resmi_tatil_gunleri_getir(donem_list,birim_unit,yil,ay):
@@ -1146,11 +1164,26 @@ class DonemDanisman(Model):
         app = 'Ogrenci'
         verbose_name = "Dönem Danışman"
         verbose_name_plural = "Dönem Danışmanları"
-        list_fields = ['__unicode__']
+        list_fields = ['bolum_adini_getir', "okutmanin_adini_getir", "okutmanin_soyadini_getir"]
         search_fields = ['aciklama']
 
     def __unicode__(self):
         return '%s %s' % (self.bolum, self.okutman)
+
+    def bolum_adini_getir(self):
+        return self.bolum.name
+
+    bolum_adini_getir.title = "Birim"
+
+    def okutmanin_adini_getir(self):
+        return self.okutman.ad
+
+    okutmanin_adini_getir.title = "Okutmanın Adı"
+
+    def okutmanin_soyadini_getir(self):
+        return self.okutman.soyad
+
+    okutmanin_soyadini_getir.title = "Okutmanın Soyadı"
 
 
 class DondurulmusKayit(Model):
@@ -1169,8 +1202,19 @@ class DondurulmusKayit(Model):
         app = 'Ogrenci'
         verbose_name = "Dondurulmuş Kayıt"
         verbose_name_plural = "Dondurulmuş Kayıtlar"
-        list_fields = ['__unicode__']
-        search_fields = ['aciklama', 'baslangic_tarihi']
+        list_fields = ['donemin_adini_getir', 'ogrenci_programinin_adini_getir', 'baslangic_tarihi', 'aciklama']
+        search_fields = ['aciklama']
 
     def __unicode__(self):
-        return '%s %s' % (self.ogrenci_program, self.donem)
+        return '%s %s %s %s' % (self.ogrenci_program, self.donem, self.baslangic_tarihi, self.aciklama)
+
+    def ogrenci_programinin_adini_getir(self):
+        return self.ogrenci_program.program.adi
+
+    ogrenci_programinin_adini_getir.title = "Kayıtlı Olduğu Program"
+
+    def donemin_adini_getir(self):
+        return self.donem.ad
+
+    donemin_adini_getir.title = "Dönem"
+
