@@ -86,5 +86,81 @@
       "tr": "Ücretsiz İzin",
       "en": "Unpaid Vacation"
     }
+  },
+  "kan_grubu": {
+    "1": {
+      "tr": "A  Rh(+)",
+      "en": "A  Rh(+)"
+    },
+    "2": {
+      "tr": "A Rh(-)",
+      "en": "A Rh(-)"
+    },
+    "3": {
+      "tr": "B Rh(+)",
+      "en": "B Rh(+)"
+    },
+    "4": {
+      "tr": "B Rh(-)",
+      "en": "B Rh(-)"
+    },
+    "5": {
+      "tr": "AB Rh(+)",
+      "en": "AB Rh(+)"
+    },
+    "6": {
+      "tr": "AB Rh(-)",
+      "en": "AB Rh(-)"
+    },
+    "7": {
+      "tr": "0 Rh(+)",
+      "en": "0 Rh(+)"
+    },
+    "8": {
+      "tr": "0 Rh(-)",
+      "en": "0 Rh(-)"
+    },
+    "9": {
+      "tr": "Bilinmeyen",
+      "en": "None"
+    }
+  },
+  "engel_grubu": {
+    "0": {
+      "tr": "YOK",
+      "en": ""
+    },
+    "1": {
+      "tr": "İŞİTME",
+      "en": ""
+    },
+    "2": {
+      "tr": "DİL VE KONUŞMA",
+      "en": ""
+    },
+    "3": {
+      "tr": "SÜREĞEN(KRONİK)",
+      "en": ""
+    },
+    "4": {
+      "tr": "ZİHİNSEL",
+      "en": ""
+    },
+    "5": {
+      "tr": "ORTOPEDİK",
+      "en": ""
+    },
+    "6": {
+      "tr": "GÖRME",
+      "en": ""
+    },
+    "7": {
+      "tr": "SINIFLANAMAYAN",
+      "en": ""
+    },
+    "8": {
+      "tr": "RUHSAL VE DUYGUSAL",
+      "en": ""
+    }
   }
 }

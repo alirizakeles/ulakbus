@@ -34,23 +34,26 @@ class Personel(Model):
     ikamet_adresi = field.String("İkamet Adresi")
     ikamet_il = field.String("İkamet İl")
     ikamet_ilce = field.String("İkamet İlçe")
+    ikamet_ulke = field.Integer("Uyruk", default="90", choices="ulke")
+    posta_kodu = field.String("Posta Kodu")
     adres_2 = field.String("Adres 2")
     oda_no = field.String("Oda Numarası")
     oda_tel_no = field.String("Oda Telefon Numarası")
     cep_telefonu = field.String("Cep Telefonu")
+    ev_telefonu = field.String("Ev Telefonu")
     e_posta = field.String("E-Posta")
     e_posta_2 = field.String("E-Posta 2")
     e_posta_3 = field.String("E-Posta 3")
     web_sitesi = field.String("Web Sitesi")
     yayinlar = field.String("Yayınlar")
     projeler = field.String("Projeler")
-    kan_grubu = field.String("Kan Grubu")
+    kan_grubu = field.Integer("Kan Grubu", choices='kan_grubu')
     ehliyet = field.String("Ehliyet")
     verdigi_dersler = field.String("Verdiği Dersler")
     biyografi = field.Text("Biyografi")
     notlar = field.Text("Notlar")
     engelli_durumu = field.String("Engellilik")
-    engel_grubu = field.String("Engel Grubu")
+    engel_grubu = field.Integer("Engel Grubu", choices='engel_grubu')
     engel_derecesi = field.String("Engel Derecesi")
     engel_orani = field.Integer("Engellilik Oranı")
     cuzdan_seri = field.String("Seri")
@@ -60,6 +63,8 @@ class Personel(Model):
     dogum_tarihi = field.Date("Doğum Tarihi", format="%d.%m.%Y")
     dogum_yeri = field.String("Doğum Yeri")
     medeni_hali = field.Integer("Medeni Hali", choices="medeni_hali")
+    uyruk = field.Integer("Uyruk", default="90", choices="ulke")
+    onceki_soyad = field.String("Önceki Soyadı")
     kayitli_oldugu_il = field.String("İl")
     kayitli_oldugu_ilce = field.String("İlçe")
     kayitli_oldugu_mahalle_koy = field.String("Mahalle/Köy")
@@ -69,7 +74,7 @@ class Personel(Model):
     kimlik_cuzdani_verildigi_yer = field.String("Cüzdanın Verildiği Yer")
     kimlik_cuzdani_verilis_nedeni = field.String("Cüzdanın Veriliş Nedeni")
     kimlik_cuzdani_kayit_no = field.String("Cüzdan Kayıt No")
-    kimlik_cuzdani_verilis_tarihi = field.String("Cüzdan Kayıt Tarihi")
+    kimlik_cuzdani_verilis_tarihi = field.Date("Cüzdan Kayıt Tarihi",format="%d.%m.%Y")
 
     kazanilmis_hak_derece = field.Integer("Güncel Kazanılmış Hak Derece", index=True)
     kazanilmis_hak_kademe = field.Integer("Güncel Kazanılmış Hak Kademe", index=True)
@@ -371,13 +376,16 @@ class Kadro(Model):
     aciklama = field.String("Açıklama", index=True, required=False)
     unvan = field.Integer("Unvan", index=True, choices="unvan_kod", required=False)
     unvan_aciklama = field.String("Unvan Aciklama", index=True, required=False)
+    kadro_turu = field.Integer("Kadro Türü", choices="personel_turu")
+    izin_tarihi = field.Date("Kadro İzin Tarihi", format="%d.%m.%Y")
+
 
     class Meta:
         app = 'Personel'
         verbose_name = "Kadro"
         verbose_name_plural = "Kadrolar"
         list_fields = ['durum', 'unvan', 'aciklama']
-        search_fields = ['unvan', 'derece']
+        search_fields = ['unvan_aciklama','unvan', 'derece']
         list_filters = ['durum']
 
     def __unicode__(self):
