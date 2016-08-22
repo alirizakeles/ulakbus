@@ -10,7 +10,8 @@ Data Migration Order:
     - Idari Personel
 - Roles
 
-- Users per personel
+- Kadrolar
+- Personel and Users per personel
 -
 
 """
