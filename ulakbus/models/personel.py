@@ -16,6 +16,7 @@ from ulakbus.lib.personel import gorunen_kademe_hesapla
 from .auth import Unit, User
 from ulakbus.settings import SICIL_PREFIX
 
+
 class Personel(Model):
     """Personel Modeli
 
