@@ -40,12 +40,21 @@ class User(Model, BaseUser):
     ait bir ve tek kullanıcı olması zorunludur.
 
     """
+    # language_choices = [('a','Türkçe'),('b','English')]
+    language_choices = {0:'Türkçe',1:'English'}
+    datetime_choices = [(0,'Türkiye'),(1,'England'),(2,'USA')]
+    number_choices = [(0,'Türkiye'),(1,'England'),(2,'USA')]
+
+    avatar = field.File("Profile Photo", random_name=True, required=False)
     username = field.String("Username", index=True)
     password = field.String("Password")
-    avatar = field.File("Profile Photo", random_name=True, required=False)
     name = field.String("First Name", index=True)
     surname = field.String("Surname", index=True)
+    e_mail = field.String("E-Mail", index=True)
     superuser = field.Boolean("Super user", default=False)
+    locale_language = field.String("Preferred Language",choices=language_choices.items(), index=False, default=0)
+    locale_datetime = field.String("Preferred Date and Time Format", choices=datetime_choices, index=False, default=0)
+    locale_number = field.String("Preferred Number Formatting",choices=number_choices, index=False, default=0)
 
     class Meta:
         app = 'Sistem'
@@ -71,6 +80,8 @@ class User(Model, BaseUser):
             return "https://www.gravatar.com/avatar/%s" % hashlib.md5(
                 "%s@gmail.com" % self.username).hexdigest()
 
+    def __unicode__(self):
+        return "%s %s" % (self.name, self.surname)
 
 class Permission(Model):
     """Permission modeli
