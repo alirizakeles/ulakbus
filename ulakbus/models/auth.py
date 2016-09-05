@@ -40,11 +40,6 @@ class User(Model, BaseUser):
     ait bir ve tek kullanıcı olması zorunludur.
 
     """
-    # language_choices = [('a','Türkçe'),('b','English')]
-    language_choices = {0:'Türkçe',1:'English'}
-    datetime_choices = [(0,'Türkiye'),(1,'England'),(2,'USA')]
-    number_choices = [(0,'Türkiye'),(1,'England'),(2,'USA')]
-
     avatar = field.File("Profile Photo", random_name=True, required=False)
     username = field.String("Username", index=True)
     password = field.String("Password")
@@ -52,10 +47,7 @@ class User(Model, BaseUser):
     surname = field.String("Surname", index=True)
     e_mail = field.String("E-Mail", index=True)
     superuser = field.Boolean("Super user", default=False)
-    locale_language = field.String("Preferred Language",choices=language_choices.items(), index=False, default=0)
-    locale_datetime = field.String("Preferred Date and Time Format", choices=datetime_choices, index=False, default=0)
-    locale_number = field.String("Preferred Number Formatting",choices=number_choices, index=False, default=0)
-
+    
     class Meta:
         app = 'Sistem'
         verbose_name = "Kullanıcı"
