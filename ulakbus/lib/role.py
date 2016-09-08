@@ -67,6 +67,18 @@ class AbsRole(Enum):
     YUKSELOKUL_MUHASEBE_ISLERI_PERSONELI = __(u"Yükselokul Muhasebe İşleri Personeli")
     YUKSELOKUL_OGRENCI_ISLERI_PERSONELI = __(u"Yükselokul Öğrenci İşleri Personeli")
 
+    MYO_MUDUR_VEKILI = __(u"Meslek Yüksek Okulu Müdür Vekili")
+    MYO_SEKRETER_VEKILI = __(u"Meslek Yüksek Okulu Sekreter Vekili")
+    MYO_SEKRETERI = __(u"Meslek Yüksek Okulu Sekreteri")
+    MYO_KURULU_UYESI = __(u"Meslek Yüksek Okulu Kurulu Üyesi")
+    MYO_YONETIM_KURULU_UYESI = __(u"Meslek Yüksek Okulu Yönetim Kurulu Üyesi")
+
+    ERASMUS_KOORDINATORU = __(u"Erasmus Koordinatorü")
+    ERASMUS_KOORDINATOR_YARDIMCISI = __(u"Erasmus Koordinatör Yardımcısı")
+
+    BAP_KOORDINATORU = __(u"BAP Koordinatörü")
+    BAP_KOORDINATOR_YARDIMCISI = __(u"BAP Koordinatör Yardımcısı")
+
     MERKEZ_MUDURU = __(u"Merkez Müdürü")
     MERKEZ_MUDUR_YARDIMCISI = __(u"Merkez Müdür Yardımcısı")
     MERKEZ_BASKANI = __(u"Merkez Başkanı")
@@ -111,17 +123,62 @@ class AbsRole(Enum):
     GENEL_SEKRETER = __(u"Genel Sekreter")
     GENEL_SEKRETER_VEKILI = __(u"Genel Sekreter Vekili")
     GENEL_SEKRETER_YARDIMCISI = __(u"Genel Sekreter Yardımcısı")
-    DAIRE_BASKANI = __(u"Daire Başkanı")
-    DAIRE_BASKAN_VEKILI = __(u"Daire Başkan Vekili")
-    DAIRE_SUBE_SEFI = __(u"Şube Şefi")
-    DAIRE_SUBE_MUDURU = __(u"Daire Şube Müdürü")
-    DAIRE_PERSONELI = __(u"Daire Personeli")
+
+    # Daire Başkanlıkları
+    BILGIISLEM_DAIRE_BASKANI = __(u"Bilgi İşlem Daire Başkanı")
+    BILGIISLEM_DAIRE_BASKAN_VEKILI = __(u"Bilgi İşlem Daire Başkan Vekili")
+    BILGIISLEM_SUBE_SEFI = __(u"Bilgi İşlem Şube Şefi")
+    BILGIISLEM_SUBE_MUDURU = __(u"Bilgi İşlem Şube Müdürü")
+    BILGIISLEM_DAIRE_PERSONELI = __(u"Bilgi İşlem Daire Personeli")
+
+    PERSONEL_DAIRE_BASKANI = __(u"Personel Daire Başkanı")
+    PERSONEL_DAIRE_BASKAN_VEKILI = __(u"Personel Daire Başkan Vekili")
+    PERSONEL_SUBE_SEFI = __(u"Personel Şube Şefi")
+    PERSONEL_SUBE_MUDURU = __(u"Personel Şube Müdürü")
+    PERSONEL_DAIRE_PERSONELI = __(u"Personel Daire Personeli")
+
+    OGRENCI_ISLERI_DAIRE_BASKANI = __(u"Öğrenci İşleri Daire Başkanı")
+    OGRENCI_ISLERI_DAIRE_BASKAN_VEKILI = __(u"Öğrenci İşleri Daire Başkan Vekili")
+    OGRENCI_ISLERI_SUBE_SEFI = __(u"Öğrenci İşleri Şube Şefi")
+    OGRENCI_ISLERI_SUBE_MUDURU = __(u"Öğrenci İşleri Şube Müdürü")
+    OGRENCI_ISLERI_DAIRE_PERSONELI = __(u"Öğrenci İşleri Daire Personeli")
+
+    IDARI_MALI_ISLER_DAIRE_BASKANI = __(u"İdari Mali İşler Daire Başkanı")
+    IDARI_MALI_ISLER_DAIRE_BASKAN_VEKILI = __(u"İdari Mali İşler Daire Başkan Vekili")
+    IDARI_MALI_ISLER_SUBE_SEFI = __(u"İdari Mali İşler Şube Şefi")
+    IDARI_MALI_ISLER_SUBE_MUDURU = __(u"İdari Mali İşler Şube Müdürü")
+    IDARI_MALI_ISLER_DAIRE_PERSONELI = __(u"İdari Mali İşler Daire Personeli")
+
+    KUTUPHANE_VE_DOKUMANTASYON_DAIRE_BASKANI = __(u"Kütüphane ve Dökümantasyon Daire Başkanı")
+    KUTUPHANE_VE_DOKUMANTASYON_DAIRE_BASKAN_VEKILI = __(u"Kütüphane ve Dökümantasyon Daire Başkan Vekili")
+    KUTUPHANE_VE_DOKUMANTASYON_SUBE_SEFI = __(u"Kütüphane ve Dökümantasyon Şube Şefi")
+    KUTUPHANE_VE_DOKUMANTASYON_SUBE_MUDURU = __(u"Kütüphane ve Dökümantasyon Şube Müdürü")
+    KUTUPHANE_VE_DOKUMANTASYON_DAIRE_PERSONELI = __(u"Kütüphane ve Dökümantasyon Şube Müdürü")
+
+    SAGLIK_KULTUR_DAIRE_BASKANI = __(u"Sağlık Kültür Spor Daire Başkanı")
+    SAGLIK_KULTUR_DAIRE_BASKAN_VEKILI = __(u"Sağlık Kültür Spor Daire Başkan Vekili")
+    SAGLIK_KULTUR_SUBE_SEFI = __(u"Sağlık Kültür Spor Şube Şefi")
+    SAGLIK_KULTUR_SUBE_MUDURU = __(u"Sağlık Kültür Spor Şube Müdürü")
+    SAGLIK_KULTUR_DAIRE_PERSONELI = __(u"Sağlık Kültür Spor Daire Personeli")
+
+    STRATEJI_DAIRE_BASKANI = __(u"Strateji Geliştirme Daire Başkanı")
+    STRATEJI_DAIRE_BASKAN_VEKLILI = __(u"Strateji Geliştirme Daire Başkan Vekili")
+    STRATEJI_SUBE_SEFI = __(u"Strateji Geliştirme Şube Şefi")
+    STRATEJI_SUBE_MUDURU = __(u"Strateji Geliştirme Şube Müdürü")
+    STRATEJI_DAIRE_PERSONELI = __(u"Strateji Geliştirme Daire Personeli")
+
+    YAPI_ISLERI_DAIRE_BASKANI = __(u"Yapı İşleri Daire Başkanı")
+    YAPI_ISLERI_DAIRE_BASKAN_VEKILI = __(u"Yapı İşleri Daire Başkan Vekili")
+    YAPI_ISLERI_SUBE_SEFI = __(u"Yapı İşleri Şube Şefi")
+    YAPI_ISLERI_SUBE_MUDURU = __(u"Yapı İşleri Şube Müdürü")
+    YAPI_ISLERI_DAIRE_PERSONELI = __(u"Yapı İşleri Daire Personeli")
+
     UNIVERSITE_SENATO_UYESI = __(u"Üniversite Senato Üyesi")
     UNIVERSITE_YONETIM_KURULU_UYESI = __(u"Üniversite Yönetim Kurulu Üyesi")
     UNIVERSITELER_ARASI_KURUL_UYESI = __(u"Üniversiteler Arası Kurul Üyesi")
     HASTANE_MUDURU = __(u"Hastahane Müdürü")
     HASTANE_MUDUR_YARDIMCISI = __(u"Hastahane Müdür Yardımcısı")
-    HASTAHANE_BAŞMUDUR_VEKILI = __(u"Hastahane Başmüdür Vekili")
+    HASTAHANE_BASMUDUR_VEKILI = __(u"Hastahane Başmüdür Vekili")
     HASTAHANELER_GENEL_DIREKTORU = __(u"Hastahaneler Genel Direktörü")
     HASTAHANELER_YONETIM_KURULU_UYELIGI = __(u"Hastahaneler Yönetim Kurulu Üyeliği")
     BASHEKIM = __(u"Başhekim")
@@ -143,15 +200,15 @@ class AbsRole(Enum):
     BILGISAYAR_ISLETMENI = __(u"Bilgisayar İşletmeni")
     KONTROLOR = __(u"Kontrolör")
 
+    # Daire Başkanı, Daire Başkan Vekili, Şube Müdürü, Şube Şefi, Daire Personeli, Koordinatör ve
+    # koordinatör yardımcısı soyut rolleri her birinin çalıştıracağı iş akışları farklı olduğu için
+    # her bir daire başkanlığı için ayrı ayrı tanımlandı.
+
     #
     # KOORDINATOR = (u"Koordinator")
     # KOORDINATOR_YARDIMCISI = (u"Koordinator Yardımcısı")
     #
-    # MYO_MUDUR_VEKILI = (u"Meslek Yüksek Okulu Müdür Vekili")
-    # MYO_SEKRETER_VEKILI = (u"Meslek Yüksek Okulu Sekreter Vekili")
-    # MYO_SEKRETERI = (u"Meslek Yüksek Okulu Sekreteri")
-    # MYO_KURULU_UYESI = (u"Meslek Yüksek Okulu Kurulu Üyesi")
-    # MYO_YONETIM_KURULU_UYESI = (u"Meslek Yüksek Okulu Yönetim Kurulu Üyesi")
+
     # MUDUR = (u"Müdür")
     # MUDUR_VEKILI = (u"Müdür Vekili")
     # SEF = (u"Şef")

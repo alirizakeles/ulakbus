@@ -139,7 +139,7 @@ class AbstractRole(Model):
     Soyut Rol modeli yetkilerin gruplandığı temel role modelidir.
 
     """
-    id = field.Integer(_(u"ID No"), index=True)
+    id = field.String(_(u"ID No"), index=True)
     name = field.String(_(u"İsim"), index=True)
     read_only = field.Boolean(_(u"Read Only"))
 
